@@ -1,58 +1,45 @@
 package com.example.a10_140.repository
 
 import com.example.a10_140.model.Tanaman
-import com.example.a10_140.model.TanamanDetailResponse
-import com.example.a10_140.model.TanamanResponse
 import com.example.a10_140.service.TanamanService
 import java.io.IOException
+import kotlin.math.tan
 
 interface TanamanRepository {
-    suspend fun getDaftarTanaman(): TanamanResponse
-    suspend fun getTanamanById(id: String): TanamanDetailResponse
+    suspend fun getTanaman(): List<Tanaman>
     suspend fun insertTanaman(tanaman: Tanaman)
     suspend fun updateTanaman(id: String, tanaman: Tanaman)
     suspend fun deleteTanaman(id: String)
+    suspend fun getTanamanById(id: String): Tanaman
 }
 
-class NetworkTanamanRepository(private val service: TanamanService) : TanamanRepository {
-
-    override suspend fun getDaftarTanaman(): TanamanResponse {
-        return try {
-            service.getTanaman()
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal mengambil daftar tanaman - ${e.message}")
-        }
-    }
-
-    override suspend fun getTanamanById(id: String): TanamanDetailResponse {
-        return try {
-            service.getTanamanById(id)
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal mengambil detail tanaman dengan ID $id - ${e.message}")
-        }
-    }
-
+class NetworkTanamanRepository(
+    private val tanamanApiService: TanamanService
+) : TanamanRepository {
     override suspend fun insertTanaman(tanaman: Tanaman) {
-        try {
-            service.insertTanaman(tanaman)
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal menambahkan tanaman baru - ${e.message}")
-        }
+        tanamanApiService.insertTanaman(tanaman)
     }
 
     override suspend fun updateTanaman(id: String, tanaman: Tanaman) {
-        try {
-            service.updateTanaman(id, tanaman)
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal memperbarui tanaman dengan ID $id - ${e.message}")
-        }
+        tanamanApiService.updateTanaman(id, tanaman)
     }
 
     override suspend fun deleteTanaman(id: String) {
         try {
-            service.deleteTanaman(id)
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal menghapus tanaman dengan ID $id - ${e.message}")
+            val response = tanamanApiService.deleteTanaman(id)
+            if (!response.isSuccessful) {
+                throw IOException("Failed to delete Tanaman. HTTP Status code: ${response.code()}")
+            } else {
+                response.message()
+                println(response.message())
+            }
+        } catch (e: Exception) {
+            throw e
         }
+    }
+
+    override suspend fun getTanaman(): List<Tanaman> = tanamanApiService.getTanaman()
+    override suspend fun getTanamanById(id: String): Tanaman {
+        return tanamanApiService.getTanamanById(id)
     }
 }
