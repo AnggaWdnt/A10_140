@@ -1,76 +1,44 @@
 package com.example.a10_140.repository
 
 import com.example.a10_140.model.Pekerja
-import com.example.a10_140.model.PekerjaDetailResponse
-import com.example.a10_140.model.PekerjaResponse
 import com.example.a10_140.service.PekerjaService
 import java.io.IOException
 
 interface PekerjaRepository {
-    /**
-     * Mengambil daftar semua pekerja.
-     */
-    suspend fun getDaftarPekerja(): PekerjaResponse
-
-    /**
-     * Mengambil detail pekerja berdasarkan ID.
-     */
-    suspend fun getPekerjaById(id: String): PekerjaDetailResponse
-
-    /**
-     * Menambahkan pekerja baru.
-     */
+    suspend fun getPekerja(): List<Pekerja>
     suspend fun insertPekerja(pekerja: Pekerja)
-
-    /**
-     * Memperbarui data pekerja berdasarkan ID.
-     */
     suspend fun updatePekerja(id: String, pekerja: Pekerja)
-
-    /**
-     * Menghapus pekerja berdasarkan ID.
-     */
     suspend fun deletePekerja(id: String)
+    suspend fun getPekerjaById(id: String): Pekerja
 }
 
-class NetworkPekerjaRepository(private val service: PekerjaService) : PekerjaRepository {
-    override suspend fun getDaftarPekerja(): PekerjaResponse {
-        return try {
-            service.getDaftarPekerja()
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal mengambil daftar pekerja - ${e.message}")
-        }
-    }
-
-    override suspend fun getPekerjaById(id: String): PekerjaDetailResponse {
-        return try {
-            service.getPekerjaById(id)
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal mengambil data pekerja dengan ID $id - ${e.message}")
-        }
-    }
-
+class NetworkPekerjaRepository(
+    private val pekerjaApiService: PekerjaService
+) : PekerjaRepository {
     override suspend fun insertPekerja(pekerja: Pekerja) {
-        try {
-            service.insertPekerja(pekerja)
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal menambahkan pekerja - ${e.message}")
-        }
+        pekerjaApiService.insertPekerja(pekerja)
     }
 
     override suspend fun updatePekerja(id: String, pekerja: Pekerja) {
-        try {
-            service.editPekerja(id, pekerja)
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal memperbarui pekerja dengan ID $id - ${e.message}")
-        }
+        pekerjaApiService.updatePekerja(id, pekerja)
     }
 
     override suspend fun deletePekerja(id: String) {
         try {
-            service.deletePekerja(id)
-        } catch (e: IOException) {
-            throw IllegalStateException("Error: Gagal menghapus pekerja dengan ID $id - ${e.message}")
+            val response = pekerjaApiService.deletePekerja(id)
+            if (!response.isSuccessful) {
+                throw IOException("Failed to delete Pekerjax. HTTP Status code: ${response.code()}")
+            } else {
+                response.message()
+                println(response.message())
+            }
+        } catch (e: Exception) {
+            throw e
         }
+    }
+
+    override suspend fun getPekerja(): List<Pekerja> = pekerjaApiService.getPekerja()
+    override suspend fun getPekerjaById(id: String): Pekerja {
+        return pekerjaApiService.getPekerjaById(id)
     }
 }
