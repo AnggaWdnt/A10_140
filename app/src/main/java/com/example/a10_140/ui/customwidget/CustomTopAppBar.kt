@@ -7,6 +7,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarScrollBehavior
 
@@ -16,7 +17,8 @@ fun CustomTopAppBar(
     title: String,
     canNavigateBack: Boolean,
     scrollBehavior: TopAppBarScrollBehavior,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit = {},
+    onRefresh: () -> Unit = {}
 ) {
     TopAppBar(
         title = { Text(text = title) },
@@ -25,6 +27,11 @@ fun CustomTopAppBar(
                 IconButton(onClick = navigateUp) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                 }
+            }
+        },
+        actions = {
+            IconButton(onClick = onRefresh) {
+                Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh")
             }
         },
         scrollBehavior = scrollBehavior
