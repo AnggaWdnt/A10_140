@@ -3,7 +3,7 @@ package com.example.a10_140.repository
 import com.example.a10_140.model.Tanaman
 import com.example.a10_140.service.TanamanService
 import java.io.IOException
-import kotlin.math.tan
+
 
 interface TanamanRepository {
     suspend fun getTanaman(): List<Tanaman>
