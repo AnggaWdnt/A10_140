@@ -4,9 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.a10_140.model.Aktivitaspertanian
-import com.example.a10_140.model.Pekerja
 import com.example.a10_140.repository.AktivitasPertanianRepository
-import com.example.a10_140.repository.PekerjaRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,7 +36,7 @@ class DetailAktivitasViewModel(
         viewModelScope.launch {
             _detailUiState.value = DetailAktivitasUiState.Loading
             _detailUiState.value = try {
-                val pekerja = Aktivitas.getAktivitasById(id)
+                val Aktivitas = Aktivitas.getAktivitasById(id)
                 DetailAktivitasUiState.Success(Aktivitas)
             } catch (e: IOException) {
                 DetailAktivitasUiState.Error("Terjadi kesalahan jaringan")
