@@ -1,4 +1,4 @@
-package com.example.a10_140.ui.viewmodel.tanaman
+package com.example.a10_140.ui.viewmodel.Tanaman
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -26,13 +26,12 @@ class DetailAktivitasViewModel(
     private val _id: String = checkNotNull(savedStateHandle["id"])
 
     private val _detailUiState = MutableStateFlow<DetailAktivitasUiState>(DetailAktivitasUiState.Loading)
-    val detailUiState: StateFlow<DetailAktivitasUiState> = _detailUiState.asStateFlow()
+    val detailAktivitasUiState: StateFlow<DetailAktivitasUiState> = _detailUiState.asStateFlow()
 
     init {
         getAktivitasById(_id)
     }
-
-    private fun getAktivitasById(id: String) {
+    fun getAktivitasById(id: String) {
         viewModelScope.launch {
             _detailUiState.value = DetailAktivitasUiState.Loading
             _detailUiState.value = try {

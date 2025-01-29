@@ -15,9 +15,9 @@ interface AppContainer {
 }
 
 
-class AppContainerImpl : AppContainer {
+class A10Container : AppContainer {
 
-    private val baseUrl = "http://10.0.2.2:3000/api/"
+    private val baseUrl = "http://10.0.2.2/a10140/"
 
 
     private val json = Json { ignoreUnknownKeys = true }

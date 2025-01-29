@@ -1,6 +1,7 @@
 package com.example.a10_140.ui.view.Pekerja
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -22,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.a10_140.model.Pekerja
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
 import com.example.a10_140.ui.navigation.DestinasiNavigasi
 import com.example.a10_140.ui.viewmodel.Pekerja.DetailPekerjaUiState
@@ -48,114 +53,134 @@ object DestinasiDetailpekerja : DestinasiNavigasi {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailpekerjaScreen(
+fun DetailPekerjaView(
     navigateBack: () -> Unit,
-    id: String,
+    idPekerja: String,
     modifier: Modifier = Modifier,
-    viewModel: DetailPekerjaViewModel = viewModel(factory = PenyediaViewModel.Factory),
-    navController: NavHostController
+    viewModel: DetailPekerjaViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    val uiState by viewModel.detailUiState .collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    LaunchedEffect(idPekerja) {
+        viewModel.getPekerjaById(idPekerja)
+    }
+
 
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiDetailpekerja.titleRes,
+                title = "Detail Pekerja",
                 canNavigateBack = true,
-                scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate("update_pekerja/$id")
-                },
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Update pekerja")
-            }
         }
-    ) { innerPadding ->
-        DetailBody(
-            detailUiState = uiState,
-            onDeleteClick = {
-                coroutineScope.launch {
-                    navigateBack()
-                }
-            },
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .fillMaxWidth()
-        )
-    }
-}
+    ) { padding ->
+        val uiState by viewModel.detailPekerjaUiState.collectAsState()
 
-@Composable
-fun DetailBody(
-    detailUiState: DetailPekerjaUiState,
-    onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    when (detailUiState) {
-        is DetailPekerjaUiState.Loading -> {
-            CircularProgressIndicator(modifier = modifier.fillMaxSize())
-        }
-        is DetailPekerjaUiState.Error -> {
-            Text(
-                text = detailUiState.message,
-                color = Color.Red,
-                modifier = modifier.fillMaxSize().wrapContentSize(Alignment.Center)
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .padding(horizontal = 16.dp) // Menghilangkan padding vertikal
+                .fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.height(8.dp)) // Memberi jarak antara top app bar dan card detail
+            BodyDetailPekerja(
+                detailPekerjaUiState = uiState,
+                modifier = Modifier.weight(1f)
             )
         }
-        is DetailPekerjaUiState.Success -> {
-            val pekerja = detailUiState.pekerja
-            Column(
-                verticalArrangement = Arrangement.spacedBy(18.dp),
-                modifier = Modifier.padding(12.dp)
+    }
+}
+
+@Composable
+fun BodyDetailPekerja(
+    detailPekerjaUiState: DetailPekerjaUiState,
+    modifier: Modifier = Modifier
+) {
+    when (detailPekerjaUiState) {
+        is DetailPekerjaUiState.Loading -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                ComponentDetailpekerja(judul = "Id", isinya = pekerja.idPekerja)
-                ComponentDetailpekerja(judul = "Nama", isinya = pekerja.namaPekerja)
-                ComponentDetailpekerja(judul = "Jabatan", isinya = pekerja.jabatan)
-                ComponentDetailpekerja(judul = "Kontak", isinya = pekerja.kontakPekerja)
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = onDeleteClick,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = "Hapus")
-                }
+                CircularProgressIndicator()
+            }
+        }
+        is DetailPekerjaUiState.Success -> {
+            val pekerja = detailPekerjaUiState.pekerja
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp) // Menghilangkan padding vertikal
+            ) {
+                ItemDetailPekerja(pekerja = pekerja)
+            }
+        }
+        is DetailPekerjaUiState.Error -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = detailPekerjaUiState.message,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
     }
 }
 
 @Composable
-fun ComponentDetailpekerja(
-    modifier: Modifier = Modifier,
+fun ItemDetailPekerja(
+    pekerja: Pekerja,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+            contentColor = Color.Black
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            ComponentDetailPekerja(judul = "ID Pekerja", isinya = pekerja.idPekerja)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ComponentDetailPekerja(judul = "Nama Pekerja", isinya = pekerja.namaPekerja)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ComponentDetailPekerja(judul = "Jabatan", isinya = pekerja.jabatan)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ComponentDetailPekerja(judul = "No.Telepon Pemasok", isinya = pekerja.kontakPekerja)
+        }
+    }
+}
+
+@Composable
+fun ComponentDetailPekerja(
     judul: String,
     isinya: String,
-){
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
             text = "$judul : ",
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
             color = Color.Gray
         )
+
         Text(
             text = isinya,
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.Black
         )
     }
 }

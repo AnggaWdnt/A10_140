@@ -21,22 +21,22 @@ sealed class DetailPekerjaUiState {
 
 class DetailPekerjaViewModel(
     savedStateHandle: SavedStateHandle,
-    private val pekerja: PekerjaRepository
+    private val pekerjaRepository: PekerjaRepository
 ) : ViewModel() {
-    private val _id: String = checkNotNull(savedStateHandle["id"])
+    private val _idPekerja: String = checkNotNull(savedStateHandle["id"])
 
-    private val _detailUiState = MutableStateFlow<DetailPekerjaUiState>(DetailPekerjaUiState.Loading)
-    val detailUiState: StateFlow<DetailPekerjaUiState> = _detailUiState.asStateFlow()
+    private val _detailPekerjaUiState = MutableStateFlow<DetailPekerjaUiState>(DetailPekerjaUiState.Loading)
+    val detailPekerjaUiState: StateFlow<DetailPekerjaUiState> = _detailPekerjaUiState.asStateFlow()
 
     init {
-        getPekerjaById(_id)
+        getPekerjaById(_idPekerja)
     }
 
-    private fun getPekerjaById(id: String) {
+     fun getPekerjaById(id: String) {
         viewModelScope.launch {
-            _detailUiState.value = DetailPekerjaUiState.Loading
-            _detailUiState.value = try {
-                val pekerja = pekerja.getPekerjaById(id)
+            _detailPekerjaUiState.value = DetailPekerjaUiState.Loading
+            _detailPekerjaUiState.value = try {
+                val pekerja = pekerjaRepository.getPekerjaById(id)
                 DetailPekerjaUiState.Success(pekerja)
             } catch (e: IOException) {
                 DetailPekerjaUiState.Error("Terjadi kesalahan jaringan")

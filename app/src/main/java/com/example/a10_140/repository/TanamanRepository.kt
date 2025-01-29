@@ -16,6 +16,7 @@ interface TanamanRepository {
 class NetworkTanamanRepository(
     private val tanamanApiService: TanamanService
 ) : TanamanRepository {
+
     override suspend fun insertTanaman(tanaman: Tanaman) {
         tanamanApiService.insertTanaman(tanaman)
     }
@@ -39,6 +40,7 @@ class NetworkTanamanRepository(
     }
 
     override suspend fun getTanaman(): List<Tanaman> = tanamanApiService.getTanaman()
+
     override suspend fun getTanamanById(id: String): Tanaman {
         return tanamanApiService.getTanamanById(id)
     }

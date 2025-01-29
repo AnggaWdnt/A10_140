@@ -1,38 +1,45 @@
 package com.example.a10_140.repository
 
-import com.example.a10_140.model.AktivitasPertanian
-import com.example.a10_140.model.AktivitasPertanianDetailResponse
-import com.example.a10_140.model.AktivitasPertanianResponse
+import com.example.a10_140.model.Aktivitaspertanian
 import com.example.a10_140.service.AktivitasPertanianService
+import java.io.IOException
+
 
 interface AktivitasPertanianRepository {
-    suspend fun getDaftarAktivitas(): AktivitasPertanianResponse
-    suspend fun getAktivitasById(id: String): AktivitasPertanianDetailResponse
-    suspend fun insertAktivitas(aktivitas: AktivitasPertanian)
-    suspend fun updateAktivitas(id: String, aktivitas: AktivitasPertanian)
+    suspend fun getAktivitas(): List<Aktivitaspertanian>
+    suspend fun insertAktivitas(aktivitaspertanian: Aktivitaspertanian)
+    suspend fun updateAktivitas(id: String, aktivitaspertanian: Aktivitaspertanian)
     suspend fun deleteAktivitas(id: String)
+    suspend fun getAktivitasById(id: String): Aktivitaspertanian
 }
 
 class NetworkAktivitasPertanianRepository(
-    private val service: AktivitasPertanianService
+    private val AktivitasApiService: AktivitasPertanianService
 ) : AktivitasPertanianRepository {
-    override suspend fun getDaftarAktivitas(): AktivitasPertanianResponse {
-        return service.getDaftarAktivitas()
+    override suspend fun insertAktivitas(aktivitaspertanian: Aktivitaspertanian) {
+        AktivitasApiService.insertAktivitas(aktivitaspertanian)
     }
 
-    override suspend fun getAktivitasById(id: String): AktivitasPertanianDetailResponse {
-        return service.getAktivitasPertanianById(id)
-    }
-
-    override suspend fun insertAktivitas(aktivitas: AktivitasPertanian) {
-        service.insertAktivitasPertanian(aktivitas)
-    }
-
-    override suspend fun updateAktivitas(id: String, aktivitas: AktivitasPertanian) {
-        service.editAktivitas(id, aktivitas)
+    override suspend fun updateAktivitas(id: String, aktivitaspertanian: Aktivitaspertanian) {
+        AktivitasApiService.updateAktivitas(id, aktivitaspertanian)
     }
 
     override suspend fun deleteAktivitas(id: String) {
-        service.deleteAktivitas(id)
+        try {
+            val response = AktivitasApiService.deleteAktivitas(id)
+            if (!response.isSuccessful) {
+                throw IOException("Failed to delete Aktivitas. HTTP Status code: ${response.code()}")
+            } else {
+                response.message()
+                println(response.message())
+            }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun getAktivitas(): List<Aktivitaspertanian> = AktivitasApiService.getAktivitas()
+    override suspend fun getAktivitasById(id: String): Aktivitaspertanian {
+        return AktivitasApiService.getAktivitasById(id)
     }
 }

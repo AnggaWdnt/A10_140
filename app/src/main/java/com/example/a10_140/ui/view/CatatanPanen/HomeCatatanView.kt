@@ -44,18 +44,19 @@ import com.example.a10_140.ui.viewmodel.CatatanPanen.CatatanUiState
 import com.example.a10_140.ui.viewmodel.CatatanPanen.HomeCatatanViewModel
 import com.example.a10_140.ui.viewmodel.PenyediaViewModel
 
-
-object DestinasiHome: DestinasiNavigasi {
-    override val route = "home"
-    override val titleRes = "Home CatatanPanen"
+object DestinasiHomeCatatanPanen : DestinasiNavigasi {
+    override val route = "homecatatan"
+    override val titleRes = "Home Catatan Panen"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeCatatanScreen(
+fun CatatanPanenHomeScreen(
     navigateToItemEntry: () -> Unit,
+    navigateToUpdate: (String) -> Unit,
+    navigateBack: () -> Unit,
+    onDetailClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
     viewModel: HomeCatatanViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -63,7 +64,7 @@ fun HomeCatatanScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiHome.titleRes,
+                title = DestinasiHomeCatatanPanen.titleRes,
                 canNavigateBack = false,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
@@ -77,12 +78,12 @@ fun HomeCatatanScreen(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(18.dp)
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Tambah")
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Tambah Catatan Panen")
             }
         }
     ) { innerPadding ->
-        HomeCatatanStatus(
-            CatatanUiState = viewModel.CatatanUiState,
+        HomeCatatanPanenStatus(
+            catatanPanenUiState = viewModel.catatanUiState,
             retryAction = { viewModel.getCatatan() },
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
@@ -95,23 +96,23 @@ fun HomeCatatanScreen(
 }
 
 @Composable
-fun HomeCatatanStatus(
-    CatatanUiState: CatatanUiState,
+fun HomeCatatanPanenStatus(
+    catatanPanenUiState: CatatanUiState,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (CatatanPanen) -> Unit = {},
     onDetailClick: (String) -> Unit
 ) {
-    when (CatatanUiState) {
+    when (catatanPanenUiState) {
         is CatatanUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
         is CatatanUiState.Success ->
-            if (CatatanUiState.Catatan.isEmpty()) {
+            if (catatanPanenUiState.Catatan.isEmpty()) {
                 Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "Tidak ada data")
+                    Text(text = "Tidak ada data Catatan Panen")
                 }
             } else {
-                CatatanLayout(
-                    perkerja = CatatanUiState.Catatan,
+                CatatanPanenLayout(
+                    catatanPanen = catatanPanenUiState.Catatan,
                     modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
                         onDetailClick(it.idPanen)
@@ -126,7 +127,7 @@ fun HomeCatatanStatus(
 }
 
 @Composable
-fun OnLoading(modifier: Modifier = Modifier){
+fun OnLoading(modifier: Modifier = Modifier) {
     Image(
         modifier = modifier.size(200.dp),
         painter = painterResource(R.drawable.loading),
@@ -135,7 +136,7 @@ fun OnLoading(modifier: Modifier = Modifier){
 }
 
 @Composable
-fun OnError(retryAction:()->Unit, modifier: Modifier = Modifier){
+fun OnError(retryAction: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -152,8 +153,8 @@ fun OnError(retryAction:()->Unit, modifier: Modifier = Modifier){
 }
 
 @Composable
-fun CatatanLayout(
-    perkerja: List<CatatanPanen>,
+fun CatatanPanenLayout(
+    catatanPanen: List<CatatanPanen>,
     modifier: Modifier = Modifier,
     onDetailClick: (CatatanPanen) -> Unit,
     onDeleteClick: (CatatanPanen) -> Unit = {}
@@ -163,7 +164,7 @@ fun CatatanLayout(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(perkerja) { item ->
+        items(catatanPanen) { item ->
             CatatanPanenCard(
                 catatanPanen = item,
                 modifier = Modifier
@@ -197,7 +198,7 @@ fun CatatanPanenCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = catatanPanen.idPanen,
+                    text = catatanPanen.tanggalPanen,
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.weight(1f))
@@ -209,8 +210,12 @@ fun CatatanPanenCard(
                 }
             }
             Text(
-                text = catatanPanen.jumlahPanen,
+                text = "Jumlah Panen: ${catatanPanen.jumlahPanen}",
                 style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Keterangan: ${catatanPanen.keterangan}",
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

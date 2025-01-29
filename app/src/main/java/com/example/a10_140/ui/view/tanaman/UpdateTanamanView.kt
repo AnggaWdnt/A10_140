@@ -1,4 +1,4 @@
-package com.example.a10_140.ui.view.Tanaman
+package com.example.a10_140.ui.view.tanaman
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,50 +14,52 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
-import com.example.a10_140.ui.navigation.DestinasiNavigasi
 import com.example.a10_140.ui.viewmodel.PenyediaViewModel
-import com.example.a10_140.ui.viewmodel.Tanaman.InsertTanamanViewModel
-import com.example.a10_140.ui.viewmodel.Tanaman.InsertUiEvent
-import com.example.a10_140.ui.viewmodel.Tanaman.InsertUiState
+import com.example.a10_140.ui.viewmodel.Tanaman.UpdateTanamanViewModel
+import com.example.a10_140.ui.viewmodel.Tanaman.UpdateUiEvent
+import com.example.a10_140.ui.viewmodel.Tanaman.UpdateUiState
 import kotlinx.coroutines.launch
-
-object DestinasiEntry: DestinasiNavigasi {
-    override val route = "item_tanaman"
-    override val titleRes = "Entry Tanaman"
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryTanamanScreen(
+fun UpdateTanamanView(
     navigateBack: () -> Unit,
+    idTanaman: String,
     modifier: Modifier = Modifier,
-    viewModel: InsertTanamanViewModel = viewModel(factory = PenyediaViewModel.Factory)
+    viewModel: UpdateTanamanViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
+    val uiState = viewModel.uiState
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    LaunchedEffect(idTanaman) {
+        viewModel.getTanamanById(idTanaman) // Retrieve Tanaman by ID
+    }
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiEntry.titleRes,
+                title = "Update Tanaman",
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack
             )
         }
     ) { innerPadding ->
-        EntryBody(
-            insertUiState = viewModel.uiState,
-            onTanamanValueChange = viewModel::updateInsertTanamanState,
+        UpdateBody(
+            updateUiState = uiState,
+            onTanamanValueChange = viewModel::updateUpdateTanamanState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.insertTanaman()
+                    viewModel.updateTanaman()
                     navigateBack()
                 }
             },
@@ -70,18 +72,18 @@ fun EntryTanamanScreen(
 }
 
 @Composable
-fun EntryBody(
-    insertUiState: InsertUiState,
-    onTanamanValueChange: (InsertUiEvent) -> Unit,
+fun UpdateBody(
+    updateUiState: UpdateUiState,
+    onTanamanValueChange: (UpdateUiEvent) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(18.dp),
-        modifier = Modifier.padding(12.dp)
+        modifier = modifier.padding(12.dp)
     ) {
         FormInput(
-            insertUiEvent = insertUiState.insertUiEvent,
+            updateUiEvent = updateUiState.updateUiEvent,
             onValueChange = onTanamanValueChange,
             modifier = Modifier.fillMaxWidth()
         )
@@ -90,7 +92,7 @@ fun EntryBody(
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Simpan")
+            Text(text = "Update")
         }
     }
 }
@@ -98,9 +100,9 @@ fun EntryBody(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormInput(
-    insertUiEvent: InsertUiEvent,
+    updateUiEvent: UpdateUiEvent,
     modifier: Modifier = Modifier,
-    onValueChange: (InsertUiEvent) -> Unit = {},
+    onValueChange: (UpdateUiEvent) -> Unit = {},
     enabled: Boolean = true
 ) {
     Column(
@@ -108,24 +110,32 @@ fun FormInput(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         OutlinedTextField(
-            value = insertUiEvent.namaTanaman,
-            onValueChange = { onValueChange(insertUiEvent.copy(namaTanaman = it)) },
+            value = updateUiEvent.idTanaman,
+            onValueChange = { onValueChange(updateUiEvent.copy(idTanaman = it)) },
             label = { Text("Nama Tanaman") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
         OutlinedTextField(
-            value = insertUiEvent.periodeTanaman,
-            onValueChange = { onValueChange(insertUiEvent.copy(periodeTanaman = it)) },
+            value = updateUiEvent.namaTanaman,
+            onValueChange = { onValueChange(updateUiEvent.copy(namaTanaman = it)) },
+            label = { Text("Tanggal Aktivitas") },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
+            singleLine = true
+        )
+        OutlinedTextField(
+            value = updateUiEvent.periodeTanaman,
+            onValueChange = { onValueChange(updateUiEvent.copy(periodeTanaman = it)) },
             label = { Text("Periode Tanaman") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
         OutlinedTextField(
-            value = insertUiEvent.deskripsiTanaman,
-            onValueChange = { onValueChange(insertUiEvent.copy(deskripsiTanaman = it)) },
+            value = updateUiEvent.deskripsiTanaman,
+            onValueChange = { onValueChange(updateUiEvent.copy(deskripsiTanaman = it)) },
             label = { Text("Deskripsi Tanaman") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,

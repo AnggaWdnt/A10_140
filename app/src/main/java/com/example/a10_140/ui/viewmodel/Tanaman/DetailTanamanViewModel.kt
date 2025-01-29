@@ -21,22 +21,22 @@ sealed class DetailTanamanUiState {
 
 class DetailTanamanViewModel(
     savedStateHandle: SavedStateHandle,
-    private val tanaman: TanamanRepository
+    private val tanamanRepository: TanamanRepository
 ) : ViewModel() {
-    private val _id: String = checkNotNull(savedStateHandle["id"])
+    private val _idTanaman: String = checkNotNull(savedStateHandle["id"])
 
-    private val _detailUiState = MutableStateFlow<DetailTanamanUiState>(DetailTanamanUiState.Loading)
-    val detailUiState: StateFlow<DetailTanamanUiState> = _detailUiState.asStateFlow()
+    private val _detailTanamanUiState = MutableStateFlow<DetailTanamanUiState>(DetailTanamanUiState.Loading)
+    val detailTanamanUiState: StateFlow<DetailTanamanUiState> = _detailTanamanUiState.asStateFlow()
 
     init {
-        getTanamanById(_id)
+        getTanamanById(_idTanaman)
     }
 
-    private fun getTanamanById(id: String) {
+        fun getTanamanById(idTanaman: String) {
         viewModelScope.launch {
-            _detailUiState.value = DetailTanamanUiState.Loading
-            _detailUiState.value = try {
-                val tanaman = tanaman.getTanamanById(id)
+            _detailTanamanUiState.value = DetailTanamanUiState.Loading
+            _detailTanamanUiState.value = try {
+                val tanaman = tanamanRepository.getTanamanById(idTanaman)
                 DetailTanamanUiState.Success(tanaman)
             } catch (e: IOException) {
                 DetailTanamanUiState.Error("Terjadi kesalahan jaringan")

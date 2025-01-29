@@ -10,13 +10,15 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopAppBar(
     title: String,
     canNavigateBack: Boolean,
-    scrollBehavior: TopAppBarScrollBehavior,
+    modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
     navigateUp: () -> Unit = {},
     onRefresh: () -> Unit = {}
 ) {

@@ -1,39 +1,29 @@
 package com.example.a10_140.ui.view.CatatanPanen
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.example.a10_140.model.CatatanPanen
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
 import com.example.a10_140.ui.navigation.DestinasiNavigasi
@@ -43,123 +33,143 @@ import com.example.a10_140.ui.viewmodel.PenyediaViewModel
 import kotlinx.coroutines.launch
 
 
-object DestinasiDetailCatatan : DestinasiNavigasi {
-    override val route = "detail_catatan"
-    override val titleRes = "Detail catatan"
+object DestinasiDetailCatatan: DestinasiNavigasi {
+    override val route = "detailCatatan"
+    override val titleRes = "Detail Catatan"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailCatatanScreen(
+fun DetailCatatanView(
+    idPanen: String,
     navigateBack: () -> Unit,
-    id: String,
     modifier: Modifier = Modifier,
-    viewModel: DetailCatatanViewModel = viewModel(factory = PenyediaViewModel.Factory),
-    navController: NavHostController
+    viewModel: DetailCatatanViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    val uiState by viewModel.detailUiState .collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    LaunchedEffect(idPanen) {
+        viewModel.getCatatanPanenById(idPanen)
+    }
 
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiDetailCatatan.titleRes,
+                title = "Catatan Panen",
                 canNavigateBack = true,
-                scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate("update_catatan/$id")
-                },
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Update catatan")
-            }
         }
-    ) { innerPadding ->
-        DetailBody(
-            detailUiState = uiState,
-            onDeleteClick = {
-                coroutineScope.launch {
-                    navigateBack()
-                }
-            },
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .fillMaxWidth()
-        )
+    ) { padding ->
+        val uiState by viewModel.detailCatatanlUiState.collectAsState()
+
+        Column(
+            modifier = modifier
+                .padding(padding)
+                .padding(horizontal = 16.dp) // Menghilangkan padding vertikal
+                .fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.height(8.dp)) // Memberi jarak antara top app bar dan card detail
+            BodyDetailCatatan(
+                detailCatatanUiState = uiState,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
 @Composable
-fun DetailBody(
-    detailUiState: DetailCatatanPanenUiState,
-    onDeleteClick: () -> Unit,
+fun BodyDetailCatatan(
+    detailCatatanUiState: DetailCatatanPanenUiState,
     modifier: Modifier = Modifier
 ) {
-    when (detailUiState) {
+    when (detailCatatanUiState) {
         is DetailCatatanPanenUiState.Loading -> {
-            CircularProgressIndicator(modifier = modifier.fillMaxSize())
-        }
-        is DetailCatatanPanenUiState.Error -> {
-            Text(
-                text = detailUiState.message,
-                color = Color.Red,
-                modifier = modifier.fillMaxSize().wrapContentSize(Alignment.Center)
-            )
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
         is DetailCatatanPanenUiState.Success -> {
-            val CatatanPanen = detailUiState.catatanPanen
+            val catatan = detailCatatanUiState.catatanPanen
             Column(
-                verticalArrangement = Arrangement.spacedBy(18.dp),
-                modifier = Modifier.padding(12.dp)
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp) // Menghilangkan padding vertikal
             ) {
-                ComponentDetailCatatan(judul = "Id Panen", isinya = CatatanPanen.idPanen)
-                ComponentDetailCatatan(judul = "id Tanaman", isinya = CatatanPanen.idTanaman)
-                ComponentDetailCatatan(judul = "tanggal panen", isinya = CatatanPanen.tanggalPanen)
-                ComponentDetailCatatan(judul = "jumlah panen", isinya = CatatanPanen.jumlahPanen)
-                ComponentDetailCatatan(judul = "Keterangan", isinya = CatatanPanen.keterangan)
-
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = onDeleteClick,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = "Hapus")
-                }
+                ItemDetailCatatan(catatan = catatan)
             }
+        }
+        is DetailCatatanPanenUiState.Error -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = detailCatatanUiState.message,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ItemDetailCatatan(
+    catatan: CatatanPanen,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+            contentColor = Color.Black
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            ComponentDetailCatatan(judul = "ID Panen", isinya = catatan.idPanen)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ComponentDetailCatatan(judul = "ID Tanaman", isinya = catatan.idTanaman)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ComponentDetailCatatan(judul = "Tanggal Panen", isinya = catatan.tanggalPanen)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ComponentDetailCatatan(judul = "Jumlah Panen", isinya = catatan.jumlahPanen)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ComponentDetailCatatan(judul = "Keterangan", isinya = catatan.keterangan)
         }
     }
 }
 
 @Composable
 fun ComponentDetailCatatan(
-    modifier: Modifier = Modifier,
     judul: String,
     isinya: String,
-){
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
             text = "$judul : ",
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
             color = Color.Gray
         )
+
         Text(
             text = isinya,
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.Black
         )
     }
 }

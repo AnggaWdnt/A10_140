@@ -25,17 +25,17 @@ class DetailCatatanViewModel(
 ) : ViewModel() {
     private val _id: String = checkNotNull(savedStateHandle["id"])
 
-    private val _detailUiState = MutableStateFlow<DetailCatatanPanenUiState>(DetailCatatanPanenUiState.Loading)
-    val detailUiState: StateFlow<DetailCatatanPanenUiState> = _detailUiState.asStateFlow()
+    private val _detailCatatannUiState = MutableStateFlow<DetailCatatanPanenUiState>(DetailCatatanPanenUiState.Loading)
+    val detailCatatanlUiState: StateFlow<DetailCatatanPanenUiState> = _detailCatatannUiState.asStateFlow()
 
     init {
         getCatatanPanenById(_id)
     }
 
-    private fun getCatatanPanenById(id: String) {
+    fun getCatatanPanenById(id: String) {
         viewModelScope.launch {
-            _detailUiState.value = DetailCatatanPanenUiState.Loading
-            _detailUiState.value = try {
+            _detailCatatannUiState.value = DetailCatatanPanenUiState.Loading
+            _detailCatatannUiState.value = try {
                 val catatan = CatatanPanen.getCatatanById(id)
                 DetailCatatanPanenUiState.Success(catatan)
             } catch (e: IOException) {

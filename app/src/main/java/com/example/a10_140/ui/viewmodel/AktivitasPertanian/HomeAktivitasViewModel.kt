@@ -30,7 +30,7 @@ class HomeAktivitasViewModel (private val aktivitas: AktivitasPertanianRepositor
         viewModelScope.launch {
             aktivitasUiState = AktivitasUiState.Loading
             aktivitasUiState = try {
-                AktivitasUiState.Success(aktivitas.getDaftarAktivitas())
+                AktivitasUiState.Success(aktivitas.getAktivitas())
             }catch (e:IOException){
                 AktivitasUiState.Error
             }catch (e: HttpException){

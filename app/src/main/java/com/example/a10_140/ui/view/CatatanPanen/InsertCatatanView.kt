@@ -28,7 +28,7 @@ import com.example.a10_140.ui.viewmodel.PenyediaViewModel
 import kotlinx.coroutines.launch
 
 
-object DestinasiEntry: DestinasiNavigasi {
+object DestinasiEntryCatatan: DestinasiNavigasi {
     override val route = "item_Catatan"
     override val titleRes = "Entry Catatan"
 }
@@ -46,7 +46,7 @@ fun EntryCatatanScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiEntry.titleRes,
+                title = DestinasiEntryCatatan.titleRes,
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack

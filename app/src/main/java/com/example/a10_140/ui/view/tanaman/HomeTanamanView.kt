@@ -1,4 +1,4 @@
-package com.example.a10_140.ui.view.Tanaman
+package com.example.a10_140.ui.view.tanaman
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -10,22 +10,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -35,28 +29,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.example.a10_140.R
 import com.example.a10_140.model.Tanaman
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
 import com.example.a10_140.ui.navigation.DestinasiNavigasi
 import com.example.a10_140.ui.viewmodel.PenyediaViewModel
-import com.example.a10_140.ui.viewmodel.tanaman.HomeTanamanViewModel
-import com.example.a10_140.ui.viewmodel.tanaman.TanamanUiState
-import kotlinx.coroutines.launch
-object DestinasiHome: DestinasiNavigasi {
-    override val route = "home"
+import com.example.a10_140.ui.viewmodel.Tanaman.HomeTanamanViewModel
+import com.example.a10_140.ui.viewmodel.Tanaman.TanamanUiState
+
+object DestinasiHomeTanaman: DestinasiNavigasi {
+    override val route = "hometanaman1"
     override val titleRes = "Home Tanaman"
 }
 
@@ -64,8 +53,10 @@ object DestinasiHome: DestinasiNavigasi {
 @Composable
 fun HomeTanamanScreen(
     navigateToItemEntry: () -> Unit,
+    navigateToUpdate: (String) -> Unit,
+    navigateBack: () -> Unit,
+    onDetailClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
     viewModel: HomeTanamanViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -73,7 +64,7 @@ fun HomeTanamanScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiHome.titleRes,
+                title = DestinasiHomeTanaman.titleRes,
                 canNavigateBack = false,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {

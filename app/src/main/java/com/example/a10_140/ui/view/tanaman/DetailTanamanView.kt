@@ -1,72 +1,51 @@
-package com.example.a10_140.ui.view.AktivitasPertanian
+package com.example.a10_140.ui.view.tanaman
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import com.example.a10_140.model.Aktivitaspertanian
-import com.example.a10_140.model.Pekerja
+import com.example.a10_140.model.Tanaman
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
 import com.example.a10_140.ui.navigation.DestinasiNavigasi
-import com.example.a10_140.ui.view.Pekerja.BodyDetailPekerja
-import com.example.a10_140.ui.viewmodel.AktivitasPertanian.DetailAktivitasUiState
-import com.example.a10_140.ui.viewmodel.AktivitasPertanian.DetailAktivitasViewModel
-import com.example.a10_140.ui.viewmodel.Pekerja.DetailPekerjaUiState
-import com.example.a10_140.ui.viewmodel.Pekerja.DetailPekerjaViewModel
 import com.example.a10_140.ui.viewmodel.PenyediaViewModel
-import kotlinx.coroutines.launch
+import com.example.a10_140.ui.viewmodel.Tanaman.DetailTanamanUiState
+import com.example.a10_140.ui.viewmodel.Tanaman.DetailTanamanViewModel
 
-
-object DestinasiDetailAktivitas : DestinasiNavigasi {
-    override val route = "detail_aktivitas"
-    override val titleRes = "Detail aktivitas"
+object DestinasiDetailTanaman : DestinasiNavigasi {
+    override val route = "detail_tanaman"
+    override val titleRes = "Detail Tanaman"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailAktivitasView(
-    navigateBack: () -> Unit,
-    idAktivitas: String,
-    modifier: Modifier = Modifier,
-    viewModel: DetailAktivitasViewModel = viewModel(factory = PenyediaViewModel.Factory)
+fun DetailTanamanView(
+idTanaman: String,
+navigateBack: () -> Unit,
+modifier: Modifier = Modifier,
+viewModel: DetailTanamanViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    LaunchedEffect(idAktivitas) {
-        viewModel.getAktivitasById(idAktivitas)
+    LaunchedEffect(idTanaman) {
+        viewModel.getTanamanById(idTanaman)
     }
-
 
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = "Detail Aktivitas",
+                title = "Detail Merk",
                 canNavigateBack = true,
                 navigateUp = navigateBack
             )
         }
     ) { padding ->
-        val uiState by viewModel.detailAktivitasUiState.collectAsState()
+        val uiState by viewModel.detailTanamanUiState.collectAsState()
 
         Column(
             modifier = Modifier
@@ -75,8 +54,8 @@ fun DetailAktivitasView(
                 .fillMaxSize()
         ) {
             Spacer(modifier = Modifier.height(8.dp)) // Memberi jarak antara top app bar dan card detail
-            BodyDetailAktivitas(
-                detailAktivitasUiState = uiState,
+            BodyDetailTanaman(
+                detailTanamanUiState = uiState,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -84,12 +63,12 @@ fun DetailAktivitasView(
 }
 
 @Composable
-fun BodyDetailAktivitas(
-    detailAktivitasUiState: DetailAktivitasUiState,
+fun BodyDetailTanaman(
+    detailTanamanUiState: DetailTanamanUiState,
     modifier: Modifier = Modifier
 ) {
-    when (detailAktivitasUiState) {
-        is DetailAktivitasUiState.Loading -> {
+    when (detailTanamanUiState) {
+        is DetailTanamanUiState.Loading -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -97,23 +76,23 @@ fun BodyDetailAktivitas(
                 CircularProgressIndicator()
             }
         }
-        is DetailAktivitasUiState.Success -> {
-            val Aktivitas = detailAktivitasUiState.Aktivitas
+        is DetailTanamanUiState.Success -> {
+            val tanaman = detailTanamanUiState.tanaman
             Column(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp) // Menghilangkan padding vertikal
             ) {
-                ItemDetailAktivitas(Aktivitas = Aktivitas)
+                ItemDetailMerk(tanaman = tanaman)
             }
         }
-        is DetailAktivitasUiState.Error -> {
+        is DetailTanamanUiState.Error -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = detailAktivitasUiState.message,
+                    text = detailTanamanUiState.message,
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -122,8 +101,8 @@ fun BodyDetailAktivitas(
 }
 
 @Composable
-fun ItemDetailAktivitas(
-    Aktivitas: Aktivitaspertanian,
+fun ItemDetailMerk(
+    tanaman: Tanaman,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -138,25 +117,22 @@ fun ItemDetailAktivitas(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            ComponentDetailAktivitas(judul = "ID Aktivitas", isinya = Aktivitas.idAktivitas)
+            ComponentDetailMerk(judul = "ID Tanaman", isinya = tanaman.idTanaman)
             Spacer(modifier = Modifier.height(8.dp))
 
-            ComponentDetailAktivitas(judul = "ID Tanaman", isinya = Aktivitas.idTanaman)
+            ComponentDetailMerk(judul = "Nama Merk", isinya = tanaman.namaTanaman)
             Spacer(modifier = Modifier.height(8.dp))
 
-            ComponentDetailAktivitas(judul = "ID Pekerja", isinya = Aktivitas.idPekerja)
+            ComponentDetailMerk(judul = "Periode Tanaman", isinya = tanaman.namaTanaman)
             Spacer(modifier = Modifier.height(8.dp))
 
-            ComponentDetailAktivitas(judul = "Tanggal Aktivitas", isinya = Aktivitas.tanggalAktivitas)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ComponentDetailAktivitas(judul = "Deskripsi Aktivitas", isinya = Aktivitas.deskripsiAktivitas)
+            ComponentDetailMerk(judul = "Deskripsi Tanaman", isinya = tanaman.deskripsiTanaman)
         }
     }
 }
 
 @Composable
-fun ComponentDetailAktivitas(
+fun ComponentDetailMerk(
     judul: String,
     isinya: String,
     modifier: Modifier = Modifier

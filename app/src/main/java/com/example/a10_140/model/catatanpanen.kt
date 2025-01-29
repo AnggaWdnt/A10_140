@@ -4,21 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PanenDetailResponse(
-    val status: Boolean,
-    val message: String,
-    val data: Panen
-)
-
-@Serializable
-data class PanenResponse(
-    val status: Boolean,
-    val message: String,
-    val data: List<Panen>
-)
-
-@Serializable
-data class Panen(
+data class CatatanPanen(
     @SerialName("id_panen")
     val idPanen: String,
     @SerialName("id_tanaman")
@@ -26,7 +12,7 @@ data class Panen(
     @SerialName("tanggal_panen")
     val tanggalPanen: String,
     @SerialName("jumlah_panen")
-    val jumlahPanen: Int,
+    val jumlahPanen: String,
     @SerialName("keterangan")
     val keterangan: String
 )

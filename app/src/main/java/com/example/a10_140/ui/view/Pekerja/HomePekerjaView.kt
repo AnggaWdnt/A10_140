@@ -44,17 +44,19 @@ import com.example.a10_140.ui.viewmodel.Pekerja.HomePekerjaViewModel
 import com.example.a10_140.ui.viewmodel.Pekerja.PekerjaUiState
 import com.example.a10_140.ui.viewmodel.PenyediaViewModel
 
-object DestinasiHome: DestinasiNavigasi {
-    override val route = "home"
+object DestinasiHomePekerja: DestinasiNavigasi {
+    override val route = "homepekerja"
     override val titleRes = "Home Pekerja"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePekerjaScreen(
+fun PekerjaHomeScreen(
     navigateToItemEntry: () -> Unit,
+    navigateToUpdate: (String) -> Unit,
+    navigateBack: () -> Unit,
+    onDetailClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
     viewModel: HomePekerjaViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -62,7 +64,7 @@ fun HomePekerjaScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiHome.titleRes,
+                title = DestinasiHomePekerja.titleRes,
                 canNavigateBack = false,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
