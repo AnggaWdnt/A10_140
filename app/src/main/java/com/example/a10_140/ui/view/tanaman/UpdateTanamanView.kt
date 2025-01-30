@@ -21,11 +21,17 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
+import com.example.a10_140.ui.navigation.DestinasiNavigasi
 import com.example.a10_140.ui.viewmodel.PenyediaViewModel
 import com.example.a10_140.ui.viewmodel.Tanaman.UpdateTanamanViewModel
 import com.example.a10_140.ui.viewmodel.Tanaman.UpdateUiEvent
 import com.example.a10_140.ui.viewmodel.Tanaman.UpdateUiState
 import kotlinx.coroutines.launch
+
+object DestinasiUpdatePekerja : DestinasiNavigasi {
+    override val route = "update_pekerja"
+    override val titleRes = "Update Pekerja"
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,7 +118,7 @@ fun FormInput(
         OutlinedTextField(
             value = updateUiEvent.idTanaman,
             onValueChange = { onValueChange(updateUiEvent.copy(idTanaman = it)) },
-            label = { Text("Nama Tanaman") },
+            label = { Text("ID Tanaman") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
@@ -120,7 +126,7 @@ fun FormInput(
         OutlinedTextField(
             value = updateUiEvent.namaTanaman,
             onValueChange = { onValueChange(updateUiEvent.copy(namaTanaman = it)) },
-            label = { Text("Tanggal Aktivitas") },
+            label = { Text("Nama Tanaman") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true

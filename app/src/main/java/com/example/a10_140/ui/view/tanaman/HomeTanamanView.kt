@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,6 +41,8 @@ import com.example.a10_140.R
 import com.example.a10_140.model.Tanaman
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
 import com.example.a10_140.ui.navigation.DestinasiNavigasi
+import com.example.a10_140.ui.view.AktivitasPertanian.OnError
+import com.example.a10_140.ui.view.AktivitasPertanian.OnLoading
 import com.example.a10_140.ui.viewmodel.PenyediaViewModel
 import com.example.a10_140.ui.viewmodel.Tanaman.HomeTanamanViewModel
 import com.example.a10_140.ui.viewmodel.Tanaman.TanamanUiState
@@ -87,6 +90,7 @@ fun HomeTanamanScreen(
             retryAction = { viewModel.gettanaman() },
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
+            onUpdateClick = navigateToUpdate,
             onDeleteClick = {
                 viewModel.deletetanaman(it.idTanaman)
                 viewModel.gettanaman()
@@ -101,6 +105,7 @@ fun HomeTanamanStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Tanaman) -> Unit = {},
+    onUpdateClick: (String) -> Unit,
     onDetailClick: (String) -> Unit
 ) {
     when (tanamanUiState) {
@@ -117,6 +122,9 @@ fun HomeTanamanStatus(
                     onDetailClick = {
                         onDetailClick(it.idTanaman)
                     },
+                    onUpdateClick = {
+                        onUpdateClick(it.idTanaman)
+                    },
                     onDeleteClick = {
                         onDeleteClick(it)
                     }
@@ -127,36 +135,11 @@ fun HomeTanamanStatus(
 }
 
 @Composable
-fun OnLoading(modifier: Modifier = Modifier){
-    Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(R.drawable.loading),
-        contentDescription = stringResource(R.string.loading)
-    )
-}
-
-@Composable
-fun OnError(retryAction:()->Unit, modifier: Modifier = Modifier){
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.error), contentDescription = ""
-        )
-        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
-        Button(onClick = retryAction) {
-            Text(stringResource(R.string.retry))
-        }
-    }
-}
-
-@Composable
 fun TanamanLayout(
     tanaman: List<Tanaman>,
     modifier: Modifier = Modifier,
     onDetailClick: (Tanaman) -> Unit,
+    onUpdateClick: (Tanaman) -> Unit,
     onDeleteClick: (Tanaman) -> Unit = {}
 ) {
     LazyColumn(
@@ -170,6 +153,9 @@ fun TanamanLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onDetailClick(item) },
+                onUpdateClick = {
+                    onUpdateClick(item)
+                },
                 onDeleteClick = {
                     onDeleteClick(item)
                 }
@@ -182,6 +168,7 @@ fun TanamanLayout(
 fun TanamanCard(
     tanaman: Tanaman,
     modifier: Modifier = Modifier,
+    onUpdateClick: (Tanaman) -> Unit = {},
     onDeleteClick: (Tanaman) -> Unit = {}
 ) {
     Card(
@@ -202,15 +189,25 @@ fun TanamanCard(
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.weight(1f))
+                IconButton(onClick = { onUpdateClick(tanaman) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Update Tanaman"
+                    )
+                }
                 IconButton(onClick = { onDeleteClick(tanaman) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null
+                        contentDescription = "Hapus Tanaman"
                     )
                 }
             }
             Text(
-                text = tanaman.deskripsiTanaman,
+                text = "Periode Tanaman: ${tanaman.periodeTanaman}",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Deskripsi Tanaman: ${tanaman.deskripsiTanaman}",
                 style = MaterialTheme.typography.titleMedium
             )
         }

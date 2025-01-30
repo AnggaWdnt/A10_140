@@ -34,6 +34,7 @@ import com.example.a10_140.ui.view.Pekerja.UpdatePekerjaView
 import com.example.a10_140.ui.view.tanaman.DestinasiDetailTanaman
 import com.example.a10_140.ui.view.tanaman.DestinasiEntryTanaman
 import com.example.a10_140.ui.view.tanaman.DestinasiHomeTanaman
+import com.example.a10_140.ui.view.tanaman.DestinasiUpdatePekerja
 import com.example.a10_140.ui.view.tanaman.DetailTanamanView
 import com.example.a10_140.ui.view.tanaman.EntryTanamanScreen
 import com.example.a10_140.ui.view.tanaman.HomeTanamanScreen
@@ -71,11 +72,11 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         composable(DestinasiHomeTanaman.route) {
             HomeTanamanScreen(
                 navigateToItemEntry = {navController.navigate(DestinasiEntryTanaman.route)},
-                onDetailClick = { id ->
-                    navController.navigate("${DestinasiDetailTanaman.route}/$id")
+                onDetailClick = { id_tanaman ->
+                    navController.navigate("${DestinasiDetailTanaman.route}/$id_tanaman")
                 },
-                navigateToUpdate = { id ->
-                    navController.navigate("update_merk/$id") // Navigasi ke update
+                navigateToUpdate = { id_tanaman ->
+                    navController.navigate("update_Tanaman/$id_tanaman") // Navigasi ke update
                 },
                 navigateBack = {navController.navigate(DestinasiHomeScreen.route) {
                     popUpTo(DestinasiHomeScreen.route) {
@@ -86,15 +87,15 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
 
         composable(
-            route = "${DestinasiDetailTanaman.route}/{id}",
-            arguments = listOf(navArgument(name = "id") { type = NavType.StringType })
+            route = "${DestinasiDetailTanaman.route}/{id_tanaman}",
+            arguments = listOf(navArgument(name = "id_tanaman") { type = NavType.StringType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id") ?: return@composable
+            val id_tanaman = backStackEntry.arguments?.getString("id_tanaman") ?: return@composable
             DetailTanamanView(
-                idTanaman = id,
+                idTanaman = id_tanaman,
                 navigateBack = {
                     navController.navigateUp()
-                }
+                },
             )
         }
 
@@ -105,14 +106,15 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                         inclusive = true
                     }
                 }
+
             })
         }
 
         composable(
-            route = "update_tanaman/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.StringType })
+            route = "update_tanaman/{id_pekerja}",
+            arguments = listOf(navArgument("id_pekerja") { type = NavType.StringType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id") ?: return@composable
+            val id = backStackEntry.arguments?.getString("id_pekerja") ?: return@composable
             UpdateTanamanView(
                 idTanaman = id,
                 navigateBack = {
@@ -124,18 +126,20 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         // Pekerja
         composable(DestinasiHomePekerja.route) {
             PekerjaHomeScreen(
-                navigateToItemEntry = {navController.navigate(DestinasiEntryPekerja.route)},
-                onDetailClick = { id ->
-                    navController.navigate("${DestinasiDetailpekerja.route}/$id")
+                navigateToItemEntry = { navController.navigate(DestinasiEntryPekerja.route) },
+                onDetailClick = { id_pekerja ->
+                    navController.navigate("${DestinasiDetailpekerja.route}/$id_pekerja")
                 },
-                navigateToUpdate = { id ->
-                    navController.navigate("update_pemasok/$id") // Navigasi ke update
+                navigateToUpdate = { id_pekerja ->
+                    navController.navigate("update_pekerja/$id_pekerja") // Navigasi ke update
                 },
-                navigateBack = {navController.navigate(DestinasiHomeScreen.route) {
-                    popUpTo(DestinasiHomeScreen.route) {
-                        inclusive = true
+                navigateBack = {
+                    navController.navigate(DestinasiHomeScreen.route) {
+                        popUpTo(DestinasiHomeScreen.route) {
+                            inclusive = true
+                        }
                     }
-                } }
+                }
             )
         }
 
@@ -148,13 +152,16 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
                 idPekerja = id,
                 navigateBack = {
                     navController.navigateUp()
+                },
+                navigateToUpdate = {
+                    navController.navigate("update_pekerja/$id") // Navigasi ke update
                 }
             )
         }
 
         composable(DestinasiEntryPekerja.route) {
             EntryPekerjaScreen(navigateBack = {
-                navController.navigate(DestinasiHomePekerja .route) {
+                navController.navigate(DestinasiHomePekerja.route) {
                     popUpTo(DestinasiHomePekerja.route) {
                         inclusive = true
                     }
@@ -163,7 +170,7 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
 
         composable(
-            route = "update_pemasok/{id}",
+            route = "update_pekerja/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: return@composable
@@ -175,15 +182,16 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
             )
         }
 
+
         // Catatan
         composable(DestinasiHomeCatatanPanen.route) {
             CatatanPanenHomeScreen(
                 navigateToItemEntry = {navController.navigate(DestinasiEntryCatatan.route)},
-                onDetailClick = { id ->
-                    navController.navigate("${DestinasiEntryCatatan.route}/$id")
+                onDetailClick = { id_panen ->
+                    navController.navigate("${DestinasiDetailCatatan.route}/$id_panen")
                 },
-                navigateToUpdate = { id ->
-                    navController.navigate("update_kategori/$id") // Navigasi ke update
+                navigateToUpdate = { id_panen ->
+                    navController.navigate("update_catatan/$id_panen") // Navigasi ke update
                 },
                 navigateBack = {navController.navigate(DestinasiHomeScreen.route) {
                     popUpTo(DestinasiHomeScreen.route) {
@@ -217,12 +225,12 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
 
         composable(
-            route = "update_kategori/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.StringType })
+            route = "update_catatan/{id_panen}",
+            arguments = listOf(navArgument("id_panen") { type = NavType.StringType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id") ?: return@composable
+            val id = backStackEntry.arguments?.getString("id_panen") ?: return@composable
             UpdateCatatanView(
-                idCatatan = id,
+                id_panen = id,
                 navigateBack = {
                     navController.navigateUp()
                 }
@@ -233,11 +241,11 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         composable(DestinasiHomeAktivitas.route) {
             HomeAktivitasScreen(
                 navigateToItemEntry = { navController.navigate(DestinasiEntryAktivitas.route) },
-                onDetailClick = { id ->
-                    navController.navigate("${DestinasiDetailTanaman.route}/$id")
+                onDetailClick = { id_aktivitas ->
+                    navController.navigate("${DestinasiDetailAktivitas.route}/$id_aktivitas")
                 },
-                navigateToUpdate = { id ->
-                    navController.navigate("update_aktivitas/$id") // Navigasi ke update
+                navigateToUpdate = { id_aktivitas ->
+                    navController.navigate("update_aktivitas/$id_aktivitas") // Navigasi ke update
                 },
                 navigateBack = {
                     navController.navigate(DestinasiHomeScreen.route) {
@@ -273,10 +281,10 @@ fun PengelolaHalaman(navController: NavHostController = rememberNavController())
         }
 
         composable(
-            route = "update_produk/{id}",
-            arguments = listOf(navArgument(name = "id") { type = NavType.StringType })
+            route = "update_aktivitas/{id_aktivitas}",
+            arguments = listOf(navArgument(name = "id_aktivitas") { type = NavType.StringType })
         ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id") ?: return@composable
+            val id = backStackEntry.arguments?.getString("id_aktivitas") ?: return@composable
             UpdateAktivitasView(
                 idAktivitas = id,
                 navigateBack = {

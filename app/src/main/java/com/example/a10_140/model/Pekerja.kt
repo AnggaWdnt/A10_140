@@ -10,6 +10,7 @@ data class Pekerja(
     val idPekerja: String,
     @SerialName("nama_pekerja")
     val namaPekerja: String,
+    @SerialName("jabatan_pekerja")
     val jabatan: String,
     @SerialName("kontak_pekerja")
     val kontakPekerja: String

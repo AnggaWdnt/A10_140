@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -90,10 +91,15 @@ fun CatatanPanenHomeScreen(
             onDeleteClick = {
                 viewModel.deleteCatatan(it.idPanen)
                 viewModel.getCatatan()
+            },
+            onUpdateClick = { catatan ->
+                navigateToUpdate(catatan.idPanen) // Pass ID to navigate to update
             }
         )
     }
 }
+
+
 
 @Composable
 fun HomeCatatanPanenStatus(
@@ -101,7 +107,8 @@ fun HomeCatatanPanenStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (CatatanPanen) -> Unit = {},
-    onDetailClick: (String) -> Unit
+    onDetailClick: (String) -> Unit,
+    onUpdateClick: (CatatanPanen) -> Unit
 ) {
     when (catatanPanenUiState) {
         is CatatanUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
@@ -119,7 +126,8 @@ fun HomeCatatanPanenStatus(
                     },
                     onDeleteClick = {
                         onDeleteClick(it)
-                    }
+                    },
+                    onUpdateClick = onUpdateClick
                 )
             }
         is CatatanUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
@@ -156,6 +164,7 @@ fun OnError(retryAction: () -> Unit, modifier: Modifier = Modifier) {
 fun CatatanPanenLayout(
     catatanPanen: List<CatatanPanen>,
     modifier: Modifier = Modifier,
+    onUpdateClick: (CatatanPanen) -> Unit,
     onDetailClick: (CatatanPanen) -> Unit,
     onDeleteClick: (CatatanPanen) -> Unit = {}
 ) {
@@ -172,17 +181,22 @@ fun CatatanPanenLayout(
                     .clickable { onDetailClick(item) },
                 onDeleteClick = {
                     onDeleteClick(item)
+                },
+                onUpdateClick ={
+                    onUpdateClick(item)
                 }
             )
         }
     }
 }
 
+
 @Composable
 fun CatatanPanenCard(
     catatanPanen: CatatanPanen,
     modifier: Modifier = Modifier,
-    onDeleteClick: (CatatanPanen) -> Unit = {}
+    onDeleteClick: (CatatanPanen) -> Unit = {},
+    onUpdateClick: (CatatanPanen) -> Unit = {}
 ) {
     Card(
         modifier = modifier,
@@ -205,6 +219,12 @@ fun CatatanPanenCard(
                 IconButton(onClick = { onDeleteClick(catatanPanen) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
+                        contentDescription = null
+                    )
+                }
+                IconButton(onClick = { onUpdateClick(catatanPanen) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
                         contentDescription = null
                     )
                 }

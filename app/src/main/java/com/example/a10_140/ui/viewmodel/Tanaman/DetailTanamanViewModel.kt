@@ -23,7 +23,7 @@ class DetailTanamanViewModel(
     savedStateHandle: SavedStateHandle,
     private val tanamanRepository: TanamanRepository
 ) : ViewModel() {
-    private val _idTanaman: String = checkNotNull(savedStateHandle["id"])
+    private val _idTanaman: String = checkNotNull(savedStateHandle["id_tanaman"])
 
     private val _detailTanamanUiState = MutableStateFlow<DetailTanamanUiState>(DetailTanamanUiState.Loading)
     val detailTanamanUiState: StateFlow<DetailTanamanUiState> = _detailTanamanUiState.asStateFlow()

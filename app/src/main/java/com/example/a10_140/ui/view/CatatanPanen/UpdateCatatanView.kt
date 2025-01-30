@@ -21,17 +21,23 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
+import com.example.a10_140.ui.navigation.DestinasiNavigasi
 import com.example.a10_140.ui.viewmodel.CatatanPanen.UpdateCatatanViewModel
 import com.example.a10_140.ui.viewmodel.CatatanPanen.UpdateUiEvent
 import com.example.a10_140.ui.viewmodel.CatatanPanen.UpdateUiState
 import com.example.a10_140.ui.viewmodel.PenyediaViewModel
 import kotlinx.coroutines.launch
 
+object DestinasiUpdateCatatan : DestinasiNavigasi {
+    override val route = "update_catatan"
+    override val titleRes = "Home Catatan Panen"
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateCatatanView(
     navigateBack: () -> Unit,
-    idCatatan: String,
+    id_panen: String,
     modifier: Modifier = Modifier,
     viewModel: UpdateCatatanViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
@@ -40,8 +46,8 @@ fun UpdateCatatanView(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     // Memuat data berdasarkan ID catatan
-    LaunchedEffect(idCatatan) {
-        viewModel.getCatatanById(idCatatan)
+    LaunchedEffect(id_panen) {
+        viewModel.getCatatanById(id_panen)
     }
 
     Scaffold(

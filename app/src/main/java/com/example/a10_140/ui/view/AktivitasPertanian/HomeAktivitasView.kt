@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -90,7 +91,8 @@ fun HomeAktivitasScreen(
             onDeleteClick = {
                 viewModel.deleteAktivitas(it.idAktivitas)
                 viewModel.getaktivitas()
-            }
+            },
+            onUpdateClick = navigateToUpdate
         )
     }
 }
@@ -101,7 +103,8 @@ fun HomeaktivitasStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Aktivitaspertanian) -> Unit = {},
-    onDetailClick: (String) -> Unit
+    onDetailClick: (String) -> Unit,
+    onUpdateClick: (String) -> Unit
 ) {
     when (AktivitasUiState) {
         is AktivitasUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
@@ -119,7 +122,8 @@ fun HomeaktivitasStatus(
                     },
                     onDeleteClick = {
                         onDeleteClick(it)
-                    }
+                    },
+                    onUpdateClick = onUpdateClick
                 )
             }
         is AktivitasUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
@@ -157,7 +161,8 @@ fun AktivitasLayout(
     aktivitas: List<Aktivitaspertanian>,
     modifier: Modifier = Modifier,
     onDetailClick: (Aktivitaspertanian) -> Unit,
-    onDeleteClick: (Aktivitaspertanian) -> Unit = {}
+    onDeleteClick: (Aktivitaspertanian) -> Unit = {},
+    onUpdateClick: (String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -172,7 +177,8 @@ fun AktivitasLayout(
                     .clickable { onDetailClick(item) },
                 onDeleteClick = {
                     onDeleteClick(item)
-                }
+                },
+                onUpdateClick = onUpdateClick
             )
         }
     }
@@ -182,7 +188,8 @@ fun AktivitasLayout(
 fun AktivitaspertanianCard(
     aktivitaspertanian: Aktivitaspertanian,
     modifier: Modifier = Modifier,
-    onDeleteClick: (Aktivitaspertanian) -> Unit = {}
+    onDeleteClick: (Aktivitaspertanian) -> Unit = {},
+    onUpdateClick: (String) -> Unit // Add navigateToUpdate function parameter
 ) {
     Card(
         modifier = modifier,
@@ -198,19 +205,29 @@ fun AktivitaspertanianCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = aktivitaspertanian.idAktivitas,
+                    text = aktivitaspertanian.tanggalAktivitas,
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.weight(1f))
+
+                // Delete Icon
                 IconButton(onClick = { onDeleteClick(aktivitaspertanian) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null
                     )
                 }
+
+                // Update Icon
+                IconButton(onClick = { onUpdateClick(aktivitaspertanian.idAktivitas) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = null
+                    )
+                }
             }
             Text(
-                text = aktivitaspertanian.deskripsiAktivitas,
+                text = "Deskripsi Aktivitas: ${aktivitaspertanian.deskripsiAktivitas}",
                 style = MaterialTheme.typography.titleMedium
             )
         }

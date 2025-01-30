@@ -20,7 +20,7 @@ interface AktivitasPertanianService {
     suspend fun getAktivitas(): List<Aktivitaspertanian>
 
     @GET("get1aktivitas.php")
-    suspend fun getAktivitasById(@Query("id_produk") idAktivitas:String): Aktivitaspertanian
+    suspend fun getAktivitasById(@Query("id_aktivitas") idAktivitas:String): Aktivitaspertanian
 
     @POST("insertaktivitas.php")
     suspend fun insertAktivitas(@Body aktivitaspertanian: Aktivitaspertanian)

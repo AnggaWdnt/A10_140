@@ -39,7 +39,7 @@ viewModel: DetailTanamanViewModel = viewModel(factory = PenyediaViewModel.Factor
     Scaffold(
         topBar = {
             CustomTopAppBar(
-                title = "Detail Merk",
+                title = "Detail Tanaman",
                 canNavigateBack = true,
                 navigateUp = navigateBack
             )
@@ -117,22 +117,22 @@ fun ItemDetailMerk(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            ComponentDetailMerk(judul = "ID Tanaman", isinya = tanaman.idTanaman)
+            ComponentDetailTanaman(judul = "ID Tanaman", isinya = tanaman.idTanaman)
             Spacer(modifier = Modifier.height(8.dp))
 
-            ComponentDetailMerk(judul = "Nama Merk", isinya = tanaman.namaTanaman)
+            ComponentDetailTanaman(judul = "Nama Tanaman", isinya = tanaman.namaTanaman)
             Spacer(modifier = Modifier.height(8.dp))
 
-            ComponentDetailMerk(judul = "Periode Tanaman", isinya = tanaman.namaTanaman)
+            ComponentDetailTanaman(judul = "Periode Tanaman", isinya = tanaman.periodeTanaman)
             Spacer(modifier = Modifier.height(8.dp))
 
-            ComponentDetailMerk(judul = "Deskripsi Tanaman", isinya = tanaman.deskripsiTanaman)
+            ComponentDetailTanaman(judul = "Deskripsi Tanaman", isinya = tanaman.deskripsiTanaman)
         }
     }
 }
 
 @Composable
-fun ComponentDetailMerk(
+fun ComponentDetailTanaman(
     judul: String,
     isinya: String,
     modifier: Modifier = Modifier

@@ -31,11 +31,11 @@ class DetailAktivitasViewModel(
     init {
         getAktivitasById(_id)
     }
-    fun getAktivitasById(id: String) {
+    fun getAktivitasById(id_aktivitas: String) {
         viewModelScope.launch {
             _detailUiState.value = DetailAktivitasUiState.Loading
             _detailUiState.value = try {
-                val Aktivitas = Aktivitas.getAktivitasById(id)
+                val Aktivitas = Aktivitas.getAktivitasById(id_aktivitas)
                 DetailAktivitasUiState.Success(Aktivitas)
             } catch (e: IOException) {
                 DetailAktivitasUiState.Error("Terjadi kesalahan jaringan")

@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -90,7 +91,8 @@ fun PekerjaHomeScreen(
             onDeleteClick = {
                 viewModel.deletepekerja(it.idPekerja)
                 viewModel.getpekerja()
-            }
+            },
+            onUpdateClick = navigateToUpdate
         )
     }
 }
@@ -101,7 +103,8 @@ fun HomePekerjaStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Pekerja) -> Unit = {},
-    onDetailClick: (String) -> Unit
+    onDetailClick: (String) -> Unit,
+    onUpdateClick: (String) -> Unit
 ) {
     when (pekerjaUiState) {
         is PekerjaUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
@@ -119,6 +122,9 @@ fun HomePekerjaStatus(
                     },
                     onDeleteClick = {
                         onDeleteClick(it)
+                    },
+                    onUpdateClick = {
+                        onUpdateClick(it.idPekerja)
                     }
                 )
             }
@@ -157,7 +163,8 @@ fun PekerjaLayout(
     perkerja: List<Pekerja>,
     modifier: Modifier = Modifier,
     onDetailClick: (Pekerja) -> Unit,
-    onDeleteClick: (Pekerja) -> Unit = {}
+    onDeleteClick: (Pekerja) -> Unit = {},
+    onUpdateClick: (Pekerja) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -172,6 +179,9 @@ fun PekerjaLayout(
                     .clickable { onDetailClick(item) },
                 onDeleteClick = {
                     onDeleteClick(item)
+                },
+                onUpdateClick = {
+                    onUpdateClick(item)
                 }
             )
         }
@@ -182,7 +192,8 @@ fun PekerjaLayout(
 fun PekerjaCard(
     pekerja: Pekerja,
     modifier: Modifier = Modifier,
-    onDeleteClick: (Pekerja) -> Unit = {}
+    onDeleteClick: (Pekerja) -> Unit = {},
+    onUpdateClick: (Pekerja) -> Unit
 ) {
     Card(
         modifier = modifier,
@@ -202,6 +213,12 @@ fun PekerjaCard(
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.weight(1f))
+                IconButton(onClick = { onUpdateClick(pekerja) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = null
+                    )
+                }
                 IconButton(onClick = { onDeleteClick(pekerja) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -210,7 +227,11 @@ fun PekerjaCard(
                 }
             }
             Text(
-                text = pekerja.kontakPekerja,
+                text = "Jabatan Pekerja: ${pekerja.jabatan}",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Kontak Pekerja: ${pekerja.kontakPekerja}",
                 style = MaterialTheme.typography.titleMedium
             )
         }

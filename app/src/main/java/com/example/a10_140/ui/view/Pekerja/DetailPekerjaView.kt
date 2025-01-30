@@ -56,13 +56,13 @@ object DestinasiDetailpekerja : DestinasiNavigasi {
 fun DetailPekerjaView(
     navigateBack: () -> Unit,
     idPekerja: String,
+    navigateToUpdate: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DetailPekerjaViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     LaunchedEffect(idPekerja) {
         viewModel.getPekerjaById(idPekerja)
     }
-
 
     Scaffold(
         topBar = {
@@ -71,6 +71,14 @@ fun DetailPekerjaView(
                 canNavigateBack = true,
                 navigateUp = navigateBack
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navigateToUpdate(idPekerja) },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(Icons.Default.Edit, contentDescription = "Edit Pekerja")
+            }
         }
     ) { padding ->
         val uiState by viewModel.detailPekerjaUiState.collectAsState()
@@ -78,50 +86,16 @@ fun DetailPekerjaView(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(horizontal = 16.dp) // Menghilangkan padding vertikal
                 .fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(8.dp)) // Memberi jarak antara top app bar dan card detail
-            BodyDetailPekerja(
-                detailPekerjaUiState = uiState,
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-fun BodyDetailPekerja(
-    detailPekerjaUiState: DetailPekerjaUiState,
-    modifier: Modifier = Modifier
-) {
-    when (detailPekerjaUiState) {
-        is DetailPekerjaUiState.Loading -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        is DetailPekerjaUiState.Success -> {
-            val pekerja = detailPekerjaUiState.pekerja
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp) // Menghilangkan padding vertikal
-            ) {
-                ItemDetailPekerja(pekerja = pekerja)
-            }
-        }
-        is DetailPekerjaUiState.Error -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = detailPekerjaUiState.message,
-                    modifier = Modifier.padding(16.dp)
+            when (uiState) {
+                is DetailPekerjaUiState.Loading -> LoadingView()
+                is DetailPekerjaUiState.Success -> {
+                    val pekerja = (uiState as DetailPekerjaUiState.Success).pekerja
+                    DetailContent(pekerja = pekerja)
+                }
+                is DetailPekerjaUiState.Error -> ErrorView(
+                    message = (uiState as DetailPekerjaUiState.Error).message
                 )
             }
         }
@@ -129,12 +103,41 @@ fun BodyDetailPekerja(
 }
 
 @Composable
-fun ItemDetailPekerja(
+fun LoadingView(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ErrorView(
+    message: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Error: $message",
+            color = Color.Red,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Composable
+fun DetailContent(
     pekerja: Pekerja,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
+            .padding(16.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
@@ -147,14 +150,11 @@ fun ItemDetailPekerja(
         ) {
             ComponentDetailPekerja(judul = "ID Pekerja", isinya = pekerja.idPekerja)
             Spacer(modifier = Modifier.height(8.dp))
-
             ComponentDetailPekerja(judul = "Nama Pekerja", isinya = pekerja.namaPekerja)
             Spacer(modifier = Modifier.height(8.dp))
-
             ComponentDetailPekerja(judul = "Jabatan", isinya = pekerja.jabatan)
             Spacer(modifier = Modifier.height(8.dp))
-
-            ComponentDetailPekerja(judul = "No.Telepon Pemasok", isinya = pekerja.kontakPekerja)
+            ComponentDetailPekerja(judul = "No.Telepon Pekerja", isinya = pekerja.kontakPekerja)
         }
     }
 }
@@ -170,12 +170,11 @@ fun ComponentDetailPekerja(
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = "$judul : ",
-            fontSize = 16.sp,
+            text = "$judul:",
+            fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.Gray
         )
-
         Text(
             text = isinya,
             fontSize = 16.sp,

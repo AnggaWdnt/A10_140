@@ -15,18 +15,18 @@ interface CatatanPanenService {
         "Accept: application/json",
         "Content-Type: application/json",
     )
-    @GET("getpekerja.php")
+    @GET("getpanen.php")
     suspend fun getCatatan(): List<CatatanPanen>
 
-    @GET("get1pekerja.php")
-    suspend fun getCatatanById(@Query("id")id:String):CatatanPanen
+    @GET("get1panen.php")
+    suspend fun getCatatanById(@Query("id_panen")id:String):CatatanPanen
 
-    @POST("insertpekerja.php")
+    @POST("insertpanen.php")
     suspend fun insertCatatan(@Body catatanPanen: CatatanPanen)
 
-    @PUT("editpekerja/php")
-    suspend fun updateCatatan(@Query("id")id: String, @Body catatanPanen: CatatanPanen)
+    @PUT("editpanen.php")
+    suspend fun updateCatatan(@Query("id_panen")id: String, @Body catatanPanen: CatatanPanen)
 
-    @DELETE("deletetpekerja.php")
-    suspend fun deleteCatatan(@Query("id")id: String): Response<Void>
+    @DELETE("deletepanen.php")
+    suspend fun deleteCatatan(@Query("id_panen")id: String): Response<Void>
 }

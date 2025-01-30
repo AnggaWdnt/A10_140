@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
+import com.example.a10_140.ui.navigation.DestinasiNavigasi
 import com.example.a10_140.ui.viewmodel.Pekerja.UpdatePekerjaErrorState
 import com.example.a10_140.ui.viewmodel.Pekerja.UpdatePekerjaUiEvent
 import com.example.a10_140.ui.viewmodel.Pekerja.UpdatePekerjaUiState
@@ -41,7 +42,7 @@ fun UpdatePekerjaView(
     modifier: Modifier = Modifier,
     viewModel: UpdatePekerjaViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    val uipemasokState = viewModel.pekerjauiState
+    val uipekerjaState = viewModel.pekerjauiState
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -53,7 +54,7 @@ fun UpdatePekerjaView(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = "Update Pemasok",
+                title = "Update Pekerja",
                 canNavigateBack = true,
                 scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack
@@ -61,14 +62,12 @@ fun UpdatePekerjaView(
         }
     ) { innerPadding ->
         UpdateBodyPekerja(
-            updatepekerjaUiState = uipemasokState,
+            updatepekerjaUiState = uipekerjaState,
             onPekerjaValueChange = viewModel::updatePekerjaState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.updatePekerja()
-                    if (viewModel.pekerjauiState.isSuccess) {
                         navigateBack()
-                    }
                 }
             },
             modifier = Modifier
@@ -90,8 +89,8 @@ fun UpdateBodyPekerja(
         verticalArrangement = Arrangement.spacedBy(18.dp),
         modifier = modifier.padding(12.dp)
     ) {
-        FormUpdatePemasok(
-            updatepemasokUiEvent = updatepekerjaUiState.updatePekerjaUiEvent,
+        FormUpdatePekerja(
+            updatepekerjaUiEvent = updatepekerjaUiState.updatePekerjaUiEvent,
             onValueChange = onPekerjaValueChange,
             modifier = Modifier.fillMaxWidth(),
             errorState = updatepekerjaUiState.isEntryValid
@@ -112,8 +111,8 @@ fun UpdateBodyPekerja(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormUpdatePemasok(
-    updatepemasokUiEvent: UpdatePekerjaUiEvent,
+fun FormUpdatePekerja(
+    updatepekerjaUiEvent: UpdatePekerjaUiEvent,
     modifier: Modifier = Modifier,
     onValueChange: (UpdatePekerjaUiEvent) -> Unit = {},
     enabled: Boolean = true,
@@ -124,9 +123,9 @@ fun FormUpdatePemasok(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         OutlinedTextField(
-            value = updatepemasokUiEvent.idPekerja,
-            onValueChange = { onValueChange(updatepemasokUiEvent.copy(idPekerja = it)) },
-            label = { Text("Nama Pemasok") },
+            value = updatepekerjaUiEvent.idPekerja,
+            onValueChange = { onValueChange(updatepekerjaUiEvent.copy(idPekerja = it)) },
+            label = { Text("ID Pekerja") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
@@ -135,9 +134,9 @@ fun FormUpdatePemasok(
         )
 
         OutlinedTextField(
-            value = updatepemasokUiEvent.namaPekerja,
-            onValueChange = { onValueChange(updatepemasokUiEvent.copy(namaPekerja = it)) },
-            label = { Text("Alamat Pemasok") },
+            value = updatepekerjaUiEvent.namaPekerja,
+            onValueChange = { onValueChange(updatepekerjaUiEvent.copy(namaPekerja = it)) },
+            label = { Text("Nama Pekerja") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
@@ -146,8 +145,8 @@ fun FormUpdatePemasok(
         )
 
         OutlinedTextField(
-            value = updatepemasokUiEvent.jabatan,
-            onValueChange = { onValueChange(updatepemasokUiEvent.copy(jabatan = it)) },
+            value = updatepekerjaUiEvent.jabatan,
+            onValueChange = { onValueChange(updatepekerjaUiEvent.copy(jabatan = it)) },
             label = { Text("jabatan pekerja") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
@@ -156,8 +155,8 @@ fun FormUpdatePemasok(
             supportingText = { Text(errorState.namaPekerja ?: "") }
         )
         OutlinedTextField(
-            value = updatepemasokUiEvent.kontakpekerja,
-            onValueChange = { onValueChange(updatepemasokUiEvent.copy(kontakpekerja = it)) },
+            value = updatepekerjaUiEvent.kontakpekerja,
+            onValueChange = { onValueChange(updatepekerjaUiEvent.copy(kontakpekerja = it)) },
             label = { Text("Kontak Pekerja") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,

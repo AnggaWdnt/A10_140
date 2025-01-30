@@ -30,7 +30,6 @@ import com.example.a10_140.model.Aktivitaspertanian
 import com.example.a10_140.model.Pekerja
 import com.example.a10_140.ui.customwidget.CustomTopAppBar
 import com.example.a10_140.ui.navigation.DestinasiNavigasi
-import com.example.a10_140.ui.view.Pekerja.BodyDetailPekerja
 import com.example.a10_140.ui.viewmodel.AktivitasPertanian.DetailAktivitasUiState
 import com.example.a10_140.ui.viewmodel.AktivitasPertanian.DetailAktivitasViewModel
 import com.example.a10_140.ui.viewmodel.Pekerja.DetailPekerjaUiState

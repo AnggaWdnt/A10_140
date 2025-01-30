@@ -18,7 +18,7 @@ class InsertTanamanViewModel (private val tanaman: TanamanRepository): ViewModel
         uiState = InsertUiState(insertUiEvent = insertUiEvent)
     }
 
-    suspend fun insertTanaman(){
+    fun insertTanaman(){
         viewModelScope.launch {
             try {
                 tanaman.insertTanaman(uiState.insertUiEvent.toTanaman())

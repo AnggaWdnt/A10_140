@@ -9,6 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PekerjaService {
@@ -20,14 +21,15 @@ interface PekerjaService {
     suspend fun getPekerja(): List<Pekerja>
 
     @GET("get1pekerja.php")
-    suspend fun getPekerjaById(@Query("id")id:String):Pekerja
+    suspend fun getPekerjaById(@Query("id_pekerja")id:String):Pekerja
 
     @POST("insertpekerja.php")
     suspend fun insertPekerja(@Body pekerja: Pekerja)
 
-    @PUT("editpekerja/php")
-    suspend fun updatePekerja(@Query("id")id: String, @Body pekerja: Pekerja)
+    @PUT("editpekerja.php")
+    suspend fun updatePekerja(@Query("id_pekerja") id: String, @Body pekerja: Pekerja): Response<Pekerja>
 
-    @DELETE("deletetpekerja.php")
-    suspend fun deletePekerja(@Query("id")id: String): Response<Void>
+
+    @DELETE("deletepekerja.php")
+    suspend fun deletePekerja(@Query("id_pekerja")id: String): Response<Void>
 }

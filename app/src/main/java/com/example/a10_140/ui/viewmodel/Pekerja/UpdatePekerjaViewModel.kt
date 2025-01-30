@@ -60,9 +60,9 @@ class UpdatePekerjaViewModel(
                 }
             }
         } else {
-            pekerjauiState = pekerjauiState.copy(snackBarMessage = "Input tidak valid. Periksa kembali data pemasok Anda.")
+            pekerjauiState = pekerjauiState.copy(snackBarMessage = "Input tidak valid. Periksa kembali data pekerja Anda.")
             viewModelScope.launch {
-                delay(3000)
+                delay(100)
                 resetSnackBarMessage()
             }
         }
